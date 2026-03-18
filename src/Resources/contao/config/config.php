@@ -2,4 +2,4 @@
 
 // Override Isotope's registration with our extended class
 $GLOBALS['FE_MOD']['isotope']['cumulativefilter'] =
-    'Bcs\IsotopeCumulativeFilterBundle\Module\SeoAwareCumulativeFilter';
+    'Bcs\IsotopeCumulativeFilterBundle\Module\BcsCumulativeFilter';
