@@ -4,4 +4,4 @@ services:
         autoconfigure: true
 
     Bcs\IsotopeCumulativeFilterBundle\EventListener\:
-        resource: '../../EventListener/*'
+        resource: '../../../EventListener/'
