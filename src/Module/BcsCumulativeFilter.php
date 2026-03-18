@@ -31,18 +31,21 @@ class BcsCumulativeFilter extends CumulativeFilter
                 $this->id
             );
         }
-
+    
         $objCache = Isotope::getRequestCache()->saveNewConfiguration();
-
-        // Use the deterministic config_hash instead of the auto-increment integer ID.
-        // This prevents search engine robots from treating every new filter combination
-        // as a unique, never-seen-before URL (which would generate infinite crawlable pages).
-        // The hash is stable: the same filter state always produces the same hash.
-        // A new InitializeRequestCacheListener translates the hash back to an integer ID
-        // before Isotope's native lookup runs, so no core changes are needed.
+    
+        // Recompute the hash using the same method Isotope uses in preSave(),
+        // because config_hash is never written back onto the model instance.
+        $config = [
+            'filters'  => $objCache->getFilters()   ?: null,
+            'sortings' => $objCache->getSortings()  ?: null,
+            'limits'   => $objCache->getLimits()    ?: null,
+        ];
+        $hash = md5(serialize($config));
+    
         Controller::redirect(
             Environment::get('base') . Url::addQueryString(
-                'isorc=' . $objCache->config_hash,
+                'isorc=' . $hash,
                 Url::removeQueryStringCallback(
                     static fn ($v, $k) => 'cumulativefilter' !== $k && !str_starts_with($k, 'page_iso'),
                     ($this->jumpTo ?: null)
