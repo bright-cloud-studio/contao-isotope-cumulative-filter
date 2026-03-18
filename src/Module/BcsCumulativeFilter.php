@@ -22,7 +22,6 @@ class BcsCumulativeFilter extends CumulativeFilter
 {
     protected function saveFilter(string $action, string $attribute, string $value): void
     {
-        // Build the new filter state exactly as the parent does
         if ('add' === $action) {
             $filters = $this->addFilter($this->activeFilters, $attribute, $value);
             Isotope::getRequestCache()->setFiltersForModule($filters, $this->id);
@@ -32,28 +31,13 @@ class BcsCumulativeFilter extends CumulativeFilter
                 $this->id
             );
         }
-
-        // Generate a deterministic hash of the current filter state
-        // so the same selection always maps to the same isorc ID
-        $filterState = Isotope::getRequestCache()->getAllFilters();
-        $hash = substr(md5(serialize($filterState)), 0, 12);
-
-        // Check if a cache entry with this hash already exists
-        $existing = RequestCache::findOneBy('config_hash', $hash);
-
-        if (null !== $existing) {
-            $cacheId = $existing->id;
-        } else {
-            $objCache = Isotope::getRequestCache()->saveNewConfiguration();
-            // Store the hash on the record (requires a migration adding config_hash column)
-            $objCache->config_hash = $hash;
-            $objCache->save();
-            $cacheId = $objCache->id;
-        }
-
+    
+        // Let Isotope's own saveNewConfiguration() handle deduplication by config_hash+store_id
+        $objCache = Isotope::getRequestCache()->saveNewConfiguration();
+    
         Controller::redirect(
             Environment::get('base') . \Haste\Util\Url::addQueryString(
-                'isorc=' . $cacheId,
+                'isorc=' . $objCache->id,
                 \Haste\Util\Url::removeQueryStringCallback(
                     static fn ($v, $k) => 'cumulativefilter' !== $k && !str_starts_with($k, 'page_iso'),
                     ($this->jumpTo ?: null)
