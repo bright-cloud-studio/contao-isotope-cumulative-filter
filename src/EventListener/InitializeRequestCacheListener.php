@@ -42,7 +42,7 @@ use Contao\PageRegular;
 #[AsHook('getPageLayout')]
 class InitializeRequestCacheListener
 {
-    public function __invoke(PageModel $pageModel, LayoutModel $layout, PageRegular $pageRegular): void
+    public function __invoke(PageModel $pageModel, LayoutModel $layout, object $pageRegular): void
     {
         $isorc = $_GET['isorc'] ?? '';
 
