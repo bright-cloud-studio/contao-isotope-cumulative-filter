@@ -3,5 +3,5 @@ services:
         autowire: true
         autoconfigure: true
 
-    Bcs\IsotopeCumulativeFilterBundle\EventListener\:
-        resource: '../../../EventListener/'
+    Bcs\IsotopeCumulativeFilterBundle\EventListener\GeneratePageListener:
+        tags: []
