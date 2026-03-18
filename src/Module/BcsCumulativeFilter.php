@@ -12,11 +12,11 @@ namespace Bcs\IsotopeCumulativeFilterBundle\Module;
 
 use Contao\Controller;
 use Contao\Environment;
+use Haste\Util\Url;
 use Isotope\Module\CumulativeFilter;
 use Isotope\Isotope;
-use Isotope\Model\RequestCache;
+use Isotope\RequestCache\CsvFilter;
 use Isotope\RequestCache\Filter;
-use Contao\System;
 
 class BcsCumulativeFilter extends CumulativeFilter
 {
@@ -31,18 +31,48 @@ class BcsCumulativeFilter extends CumulativeFilter
                 $this->id
             );
         }
-    
-        // Let Isotope's own saveNewConfiguration() handle deduplication by config_hash+store_id
+
         $objCache = Isotope::getRequestCache()->saveNewConfiguration();
-    
+
         Controller::redirect(
-            Environment::get('base') . \Haste\Util\Url::addQueryString(
+            Environment::get('base') . Url::addQueryString(
                 'isorc=' . $objCache->id,
-                \Haste\Util\Url::removeQueryStringCallback(
+                Url::removeQueryStringCallback(
                     static fn ($v, $k) => 'cumulativefilter' !== $k && !str_starts_with($k, 'page_iso'),
                     ($this->jumpTo ?: null)
                 )
             )
         );
+    }
+
+    private function addFilter(array $filters, string $attribute, string $value): array
+    {
+        if ($this->isCsv($attribute)) {
+            $filter = CsvFilter::attribute($attribute)->contains($value);
+        } else {
+            $filter = Filter::attribute($attribute)->isEqualTo($value);
+        }
+
+        if (!$this->isMultiple($attribute) || self::QUERY_OR === $this->iso_cumulativeFields[$attribute]['queryType']) {
+            $group = 'cumulative_' . $attribute;
+            $filter->groupBy($group);
+
+            if (self::QUERY_AND === $this->iso_cumulativeFields[$attribute]['queryType']) {
+                foreach ($filters as $k => $oldFilter) {
+                    if ($oldFilter->getGroup() == $group) {
+                        unset($filters[$k]);
+                    }
+                }
+            }
+        }
+
+        $filters[$this->generateFilterKey($attribute, $value)] = $filter;
+
+        return $filters;
+    }
+
+    private function generateFilterKey(string $field, string $value): string
+    {
+        return $field . '=' . $value;
     }
 }
