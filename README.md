@@ -1,2 +1,2 @@
 # Bright Cloud Studio's contao-isotope-cumulative-filter
-Isotope's Cumulative Filter is leading to issues where robots are generating infinite 'isorc' pages. This package overrides the Cumulative Filter module to change 'isorc' to a deterministic key instead of an ID, which stops this from generating infinite pages. Also adds a hook to set 'noindex, nofollow' on Product List pages when filtering parameters are found in the URL.
+Isotope's Cumulative Filter is leading to issues where robots are generating infinite 'isorc' pages. This package overrides the Cumulative Filter module to change 'isorc' to a deterministic key instead of an ID, which stops this from generating infinite pages. 
