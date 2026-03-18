@@ -3,5 +3,6 @@ services:
         autowire: true
         autoconfigure: true
 
-    Bcs\IsotopeCumulativeFilterBundle\EventListener\GeneratePageListener:
-        tags: []
+    Bcs\IsotopeCumulativeFilterBundle\EventListener\GeneratePageListener: ~
+
+    Bcs\IsotopeCumulativeFilterBundle\EventListener\InitializeRequestCacheListener: ~
