@@ -15,7 +15,7 @@ class GeneratePageListener
     {
         // Check if the request contains 'isorc' or 'cumulativefilter' parameters
         if (preg_match('/[?&](isorc|cumulativefilter)=/', Environment::get('request'))) {
-            $GLOBALS['TL_HEAD'][] = '<meta name="robots" content="noindex,follow">';
+            $pageModel->robots = 'noindex,nofollow';
         }
     }
 }
