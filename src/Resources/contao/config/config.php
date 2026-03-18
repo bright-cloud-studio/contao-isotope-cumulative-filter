@@ -1,3 +1,9 @@
 <?php
 
-// This is here for the folder structure
+// Register the SeoAwareCumulativeFilter as an Isotope frontend module
+$GLOBALS['ISO_MOD']['filter']['BcsCumulativeFilter'] = [
+    'extends' => 'cumulativefilter',
+];
+
+$GLOBALS['FE_MOD']['isotope']['BcsCumulativeFilter'] =
+    'Bcs\IsotopeCumulativeFilterBundle\Module\BcsCumulativeFilter';
