@@ -38,6 +38,14 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  *   lookup (RequestCache::findByIdAndStore) continues to work without any
  *   changes to Isotope core.
  *
+ * Strict hash-only enforcement:
+ *   The system operates exclusively on hash-based isorc values.  Any isorc
+ *   value that is not a valid 32-character MD5 hex hash (including plain
+ *   integer IDs such as isorc=1) is treated as invalid and triggers a
+ *   301 redirect to the clean page URL.  This prevents integer IDs from
+ *   accidentally matching real tl_iso_requestcache rows that were created
+ *   before or outside this bundle.
+ *
  * Invalid / unknown hash handling:
  *   When a 32-character hex value is present in the URL but has no matching row
  *   in tl_iso_requestcache (cache purged, stale bookmark, manually forged URL,
@@ -69,13 +77,20 @@ class InitializeRequestCacheListener
     {
         $isorc = $_GET['isorc'] ?? '';
 
-        // Only act when the value looks like a 32-character MD5 hex hash.
-        // Integer IDs (legacy / transition) pass through untouched so existing
-        // bookmarks and links continue to work.
-        if (!preg_match('/^[0-9a-f]{32}$/i', $isorc)) {
+        // If isorc is not present in the URL at all, nothing to do.
+        if ('' === $isorc) {
             return;
         }
 
+        // Reject anything that is not a valid 32-character MD5 hex hash.
+        // This includes plain integer IDs (e.g. isorc=1) which could
+        // accidentally match real tl_iso_requestcache rows — those must
+        // no longer be allowed through.
+        if (!preg_match('/^[0-9a-f]{32}$/i', $isorc)) {
+            $this->redirectWithoutIsorc();
+        }
+
+        // Valid hash format — look it up in the database.
         $row = Database::getInstance()
             ->prepare('SELECT id FROM tl_iso_requestcache WHERE config_hash = ? LIMIT 1')
             ->execute($isorc)
@@ -88,16 +103,24 @@ class InitializeRequestCacheListener
             return;
         }
 
-        // ----------------------------------------------------------------
-        // Unknown hash: 301-redirect to the clean page URL (no isorc).
-        //
-        // Build the canonical page URL from the current request, stripping
-        // isorc (and the leading page_iso* pagination params which are also
-        // filter-state-dependent and would be stale without a valid cache).
-        // ----------------------------------------------------------------
+        // Unknown hash (cache purged, stale link, forged value, etc.):
+        // 301-redirect to the clean page URL with isorc stripped.
+        $this->redirectWithoutIsorc();
+    }
+
+    /**
+     * Build the current URL with isorc (and stale page_iso* pagination params)
+     * removed, then issue a 301 redirect and exit.
+     *
+     * cumulativeFilter query parameters are intentionally preserved — they are
+     * not filter-state identifiers and must survive the redirect.
+     */
+    private function redirectWithoutIsorc(): never
+    {
         $currentUrl = Environment::get('uri');
 
-        // Remove isorc and any page_iso* pagination parameters from the query string.
+        // Remove isorc and any page_iso* pagination parameters from the query
+        // string.  cumulativeFilter params are left untouched.
         $cleanUrl = preg_replace_callback(
             '/([?&])(?:isorc|page_iso[^=&]*)=[^&]*(&|$)/',
             static function (array $m): string {
