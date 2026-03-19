@@ -10,6 +10,7 @@
 
 namespace Bcs\IsotopeCumulativeFilterBundle\EventListener;
 
+use Contao\Controller;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\Database;
 use Contao\Environment;
@@ -69,9 +70,7 @@ class InitializeRequestCacheListener
             // so the URL is clean and Isotope does not see an invalid cache entry.
             $cleanUrl = Url::removeQueryString(['isorc']);
 
-            header('HTTP/1.1 301 Moved Permanently');
-            header('Location: ' . Environment::get('base') . ltrim($cleanUrl, '/'));
-            exit;
+            Controller::redirect(Environment::get('base') . ltrim($cleanUrl, '/'), 301);
         }
     }
 }
