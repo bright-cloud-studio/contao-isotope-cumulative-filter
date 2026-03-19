@@ -75,17 +75,10 @@ class BcsCumulativeFilter extends CumulativeFilter
             }
 
             $objCache = Isotope::getRequestCache()->saveNewConfiguration();
-
-            // RequestCache::preSave() computes config_hash and writes it to the
-            // database but never assigns it back to the model instance, so
-            // $objCache->config_hash is always null after the call returns.
-            // We reproduce the identical hash computation here.
-            $config = [
-                'filters'  => $objCache->getFilters()  ?: null,
-                'sortings' => $objCache->getSortings() ?: null,
-                'limits'   => $objCache->getLimits()   ?: null,
-            ];
-            $hash = md5(serialize($config));
+            $hash = \Contao\Database::getInstance()
+                ->prepare('SELECT config_hash FROM tl_iso_requestcache WHERE id=? LIMIT 1')
+                ->execute($objCache->id)
+                ->config_hash;
 
             Controller::redirect(
                 Environment::get('base') . Url::addQueryString(
