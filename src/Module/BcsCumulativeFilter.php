@@ -11,6 +11,7 @@
 namespace Bcs\IsotopeCumulativeFilterBundle\Module;
 
 use Contao\Controller;
+use Contao\Database;
 use Contao\Environment;
 use Contao\Input;
 use Haste\Util\Url;
@@ -23,20 +24,21 @@ use Isotope\RequestCache\Sort;
 class BcsCumulativeFilter extends CumulativeFilter
 {
     /**
-     * Override compile() so we can intercept the filter-save request before
-     * the parent's compile() calls its *private* saveFilter() method (which
-     * we cannot override because PHP private methods are not polymorphic).
+     * Override compile() to intercept the filter-save request before the
+     * parent's private saveFilter() runs, so we can redirect with a
+     * deterministic MD5 hash instead of a database auto-increment ID.
      *
-     * When a cumulativefilter action is present for this module we:
-     *   1. Apply the filter change to the request cache ourselves.
-     *   2. Persist it with saveNewConfiguration().
-     *   3. Recompute the deterministic MD5 hash (same logic as RequestCache::preSave)
-     *      because saveNewConfiguration() never writes config_hash back onto the
-     *      returned model instance.
-     *   4. Redirect with ?isorc=<hash> instead of ?isorc=<integer id>.
+     * Flow:
+     *   1. Detect the cumulativefilter action for this module (same guard as parent).
+     *   2. Apply the filter change to the request cache.
+     *   3. Persist it with saveNewConfiguration() — this writes the row (or finds the
+     *      existing one) and stores config_hash in the database.
+     *   4. Read config_hash back from the database using the returned row ID.
+     *      (We read from DB rather than recomputing because RequestCache::preSave()
+     *      is protected and the exact serialisation must stay in sync with core.)
+     *   5. Redirect to ?isorc=<config_hash>.
      *
-     * For every other request (no filter action, or action for a different module)
-     * we fall through to the parent compile() unchanged.
+     * For every other request we fall through to the unmodified parent compile().
      */
     protected function compile(): void
     {
@@ -75,10 +77,17 @@ class BcsCumulativeFilter extends CumulativeFilter
             }
 
             $objCache = Isotope::getRequestCache()->saveNewConfiguration();
-            $hash = \Contao\Database::getInstance()
+
+            // Read the hash that RequestCache::preSave() wrote to the database.
+            // We do NOT recompute it here — that would risk a mismatch if the
+            // core serialisation ever changes.
+            $row = Database::getInstance()
                 ->prepare('SELECT config_hash FROM tl_iso_requestcache WHERE id=? LIMIT 1')
                 ->execute($objCache->id)
-                ->config_hash;
+                ->fetchAssoc();
+
+            // Fall back to integer ID only if the DB read somehow fails.
+            $hash = $row['config_hash'] ?? $objCache->id;
 
             Controller::redirect(
                 Environment::get('base') . Url::addQueryString(
