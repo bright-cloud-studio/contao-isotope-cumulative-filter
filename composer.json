@@ -1,6 +1,6 @@
 {
     "name":"bright-cloud-studio/contao-isotope-cumulative-filter",
-    "description":"Customizing Isotope's Cumulative Filter module for Contao 4.13 to improve overall performance and fix issues with robots getting stuck in infinite pages.",
+    "description":"Extends Isotope's Cumulative Filter to use deterministic MD5 hashes in URLs, preventing search engine robots from crawling infinite unique pages.",
     "keywords": ["contao", "isotope", "cumulative", "filter", "bright", "cloud", "studio"],
     "type": "contao-bundle",
     "homepage": "http://brightcloudstudio.com/",
