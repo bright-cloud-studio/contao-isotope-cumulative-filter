@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  Bright Cloud Studio
+ * @copyright  Bright Cliud Studio
  * @author     Bright Cloud Studio
  * @package    Contao Isotope Cumulative Filter
  * @license    LGPL-3.0+
@@ -9,7 +9,6 @@
  */
 
 namespace Bcs\IsotopeCumulativeFilterBundle\ContaoManager;
-
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
@@ -23,7 +22,7 @@ class Plugin implements BundlePluginInterface
     {
         return [
             BundleConfig::create('Bcs\IsotopeCumulativeFilterBundle\BcsIsotopeCumulativeFilterBundle')
-                ->setLoadAfter(['Contao\\CoreBundle\\ContaoCoreBundle', 'isotope', 'isotope_rules'])
+                ->setLoadAfter(['Contao\CoreBundle\ContaoCoreBundle', 'isotope', 'isotope_rules']),
         ];
     }
 }
