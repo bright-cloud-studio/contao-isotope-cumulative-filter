@@ -93,7 +93,7 @@ class BcsCumulativeFilter extends CumulativeFilter
                 Environment::get('base') . Url::addQueryString(
                     'isorc=' . $hash,
                     Url::removeQueryStringCallback(
-                        static fn ($v, $k) => 'cumulativefilter' !== $k && !str_starts_with($k, 'page_iso'),
+                        static fn ($v, $k) => 'cumulativefilter' !== $k && 'isorc' !== $k && !str_starts_with($k, 'page_iso'),
                         ($this->jumpTo ?: null)
                     )
                 )
