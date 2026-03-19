@@ -13,7 +13,7 @@ namespace Bcs\IsotopeCumulativeFilterBundle\Module;
 use Contao\Controller;
 use Contao\Database;
 use Contao\Environment;
-use Contao\Input;
+use Haste\Input\Input;
 use Haste\Util\Url;
 use Isotope\Module\CumulativeFilter;
 use Isotope\Isotope;
