@@ -1,6 +1,6 @@
 # Contao Isotope Cumulative Filter
 
-A Contao bundle that extends Isotope's built-in Cumulative Filter module to use deterministic, content-based URL parameters — preventing search engine robots from crawling an infinite stream of unique filter URLs.
+A drop-in Contao bundle that fixes Isotope's Cumulative Filter module to use deterministic, content-based URL parameters — preventing search engine robots from crawling an infinite stream of unique filter URLs. No reconfiguration required.
 
 ## The Problem
 
@@ -10,7 +10,7 @@ Isotope's native Cumulative Filter stores each unique filter combination as a ro
 
 This bundle replaces the auto-increment integer in `?isorc=` with a deterministic MD5 hash of the filter configuration. The same combination of filters always produces the same hash, so robots never encounter a URL they haven't already seen. Pages with active filter parameters are also marked `noindex,nofollow` automatically.
 
-The hash is resolved back to the corresponding database row ID transparently before Isotope's native lookup runs, so Isotope core requires no modifications.
+The hash is resolved back to the corresponding database row ID transparently before Isotope's native lookup runs, so Isotope core requires no modifications and your existing frontend modules require no reconfiguration.
 
 ## Requirements
 
@@ -24,17 +24,15 @@ The hash is resolved back to the corresponding database row ID transparently bef
 composer require bright-cloud-studio/contao-isotope-cumulative-filter
 ```
 
-After installation, run a Contao database update if prompted.
-
-## Usage
-
-In the Contao backend, configure your filter frontend module as you normally would, but select **Cumulative Filter (BCS)** as the module type instead of Isotope's default **Cumulative Filter**. No other configuration is required.
+After installation, run a Contao database update if prompted. Your existing Cumulative Filter modules will immediately use the new behaviour — no changes in the backend are needed.
 
 ## How It Works
 
-### `BcsCumulativeFilter` (Module)
+### Module Override
 
-Extends Isotope's `CumulativeFilter` class. Intercepts the filter save request, persists the filter state via `RequestCache::saveNewConfiguration()`, then reads the `config_hash` column written by Isotope's own `preSave()` logic and redirects to `?isorc=<hash>` instead of `?isorc=<id>`.
+The bundle registers its extended class against Isotope's existing `iso_cumulativefilter` key in `$GLOBALS['FE_MOD']`, replacing the default class transparently. Your existing Cumulative Filter frontend modules continue to work as-is — they just now go through the extended class instead of Isotope's original.
+
+The extended class intercepts the filter save request, persists the filter state via Isotope's own `RequestCache::saveNewConfiguration()`, then reads the `config_hash` column and redirects to `?isorc=<hash>` instead of `?isorc=<id>`.
 
 ### `InitializeRequestCacheListener` (Hook: `getPageLayout`)
 
