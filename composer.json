@@ -3,7 +3,7 @@
     "description":"Extends Isotope's Cumulative Filter to use deterministic MD5 hashes in URLs, preventing search engine robots from crawling infinite unique pages.",
     "keywords": ["contao", "isotope", "cumulative", "filter", "bright", "cloud", "studio"],
     "type": "contao-bundle",
-    "homepage": "http://brightcloudstudio.com/",
+    "homepage": "https://brightcloudstudio.com/",
     "license": "LGPL-3.0+",
     "authors":[
         {
