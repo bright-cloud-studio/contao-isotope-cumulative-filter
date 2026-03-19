@@ -10,14 +10,11 @@
 
 namespace Bcs\IsotopeCumulativeFilterBundle\EventListener;
 
-use Contao\Controller;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\Database;
-use Contao\Environment;
 use Contao\LayoutModel;
 use Contao\PageModel;
 use Contao\PageRegular;
-use Haste\Util\Url;
 
 /**
  * Translates a deterministic config_hash in the 'isorc' URL parameter back to
@@ -66,11 +63,9 @@ class InitializeRequestCacheListener
             $_GET['isorc'] = (string) $row['id'];
         } else {
             // Hash is not in the database (cache was purged, or the URL is stale/forged).
-            // Redirect the browser to the same page without the stale isorc parameter
-            // so the URL is clean and Isotope does not see an invalid cache entry.
-            $cleanUrl = Url::removeQueryString(['isorc']);
-
-            Controller::redirect(Environment::get('base') . ltrim($cleanUrl, '/'), 301);
+            // Remove the parameter entirely so Isotope does not mark the page noSearch
+            // with an empty/invalid cache entry.
+            unset($_GET['isorc']);
         }
     }
 }
