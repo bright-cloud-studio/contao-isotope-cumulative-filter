@@ -48,4 +48,4 @@ LGPL-3.0-or-later. See [LICENSE](LICENSE) for full terms.
 
 ## Credits
 
-Developed by [Bright Cloud Studio](https://brightcloudstudio.com).
+Developed by [Mark St. Jean](mailto:mark@brightcloudstudio.com) at [Bright Cloud Studio](https://brightcloudstudio.com).
