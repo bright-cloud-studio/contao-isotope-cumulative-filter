@@ -112,6 +112,8 @@ class BcsCumulativeFilter extends CumulativeFilter
 
     private function buildAddFilter(array $filters, string $attribute, string $value): array
     {
+        // isCsv() and isMultiple() are inherited from CumulativeFilter (protected)
+        
         if ($this->isCsv($attribute)) {
             $filter = CsvFilter::attribute($attribute)->contains($value);
         } else {
