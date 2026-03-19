@@ -22,7 +22,7 @@ class Plugin implements BundlePluginInterface
     {
         return [
             BundleConfig::create('Bcs\IsotopeCumulativeFilterBundle\BcsIsotopeCumulativeFilterBundle')
-                ->setLoadAfter(['Contao\CoreBundle\ContaoCoreBundle']),
+                ->setLoadAfter(['Contao\\CoreBundle\\ContaoCoreBundle', 'isotope', 'isotope_rules'])
         ];
     }
 }
