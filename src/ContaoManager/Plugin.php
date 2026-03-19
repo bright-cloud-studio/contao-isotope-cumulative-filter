@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  Bright Cliud Studio
+ * @copyright  Bright Cloud Studio
  * @author     Bright Cloud Studio
  * @package    Contao Isotope Cumulative Filter
  * @license    LGPL-3.0+
