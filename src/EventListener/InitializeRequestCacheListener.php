@@ -98,7 +98,7 @@ class InitializeRequestCacheListener
         $currentUrl = Environment::get('uri');
 
         // Remove isorc and any page_iso* pagination parameters from the query string.
-        $cleanUrl = preg_replace(
+        $cleanUrl = preg_replace_callback(
             '/([?&])(?:isorc|page_iso[^=&]*)=[^&]*(&|$)/',
             static function (array $m): string {
                 // If the removed param was preceded by '?' and followed by '&',
