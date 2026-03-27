@@ -75,9 +75,9 @@ class ReplaceIsorcInRedirectListener
             return;
         }
 
-        $newLocation = preg_replace(
+        $newLocation = preg_replace_callback(
             '/([?&]isorc=)\d+/',
-            '${1}' . $row['config_hash'],
+            static fn(array $m) => $m[1] . $row['config_hash'],
             $location
         );
 
