@@ -19,8 +19,7 @@
     },
     "require":{
         "php": "^7.4 || ^8.0",
-        "contao/core-bundle": "^4.13 || ^5.3",
-        "isotope/isotope": "^2.0"
+        "contao/core-bundle": "^4.13 || ^5.3"
     },
     "extra":{
         "contao-manager-plugin": "Bcs\\IsotopeCumulativeFilterBundle\\ContaoManager\\Plugin"
