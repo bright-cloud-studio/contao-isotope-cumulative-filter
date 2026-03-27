@@ -64,7 +64,8 @@ class BcsCumulativeFilter extends CumulativeFilter
             $value     = $arrFilter[3];
 
             if ('add' === $action) {
-                $filters = $this->buildAddFilter($this->activeFilters, $attribute, $value);
+                $currentFilters = Isotope::getRequestCache()->getFiltersForModule($this->id);
+                $filters = $this->buildAddFilter($currentFilters, $attribute, $value);
                 Isotope::getRequestCache()->setFiltersForModule($filters, $this->id);
 
                 // Preserve the parent's sorting side-effect on 'add'.
