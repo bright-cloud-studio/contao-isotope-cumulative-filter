@@ -58,7 +58,7 @@ class BcsCumulativeFilter extends CumulativeFilter
 
         // Only intercept when this action belongs to our module instance and
         // the attribute is registered — mirrors the parent's own guard condition.
-        if ($arrFilter[0] == $this->id && isset($this->iso_cumulativeFields[$arrFilter[2]])) {
+        if ($arrFilter[0] === (string) $this->id && isset($this->iso_cumulativeFields[$arrFilter[2]])) {
             $action    = $arrFilter[1];
             $attribute = $arrFilter[2];
             $value     = $arrFilter[3];
