@@ -42,7 +42,19 @@ class BcsCumulativeFilter extends CumulativeFilter
      */
     protected function compile(): void
     {
-        $arrFilter = explode(';', base64_decode(Input::get('cumulativefilter', true)), 4);
+        $decoded = base64_decode(Input::get('cumulativefilter', true));
+
+        if (false === $decoded) {
+            parent::compile();
+            return;
+        }
+        
+        $arrFilter = explode(';', $decoded, 4);
+        
+        if (count($arrFilter) < 4) {
+            parent::compile();
+            return;
+        }
 
         // Only intercept when this action belongs to our module instance and
         // the attribute is registered — mirrors the parent's own guard condition.
