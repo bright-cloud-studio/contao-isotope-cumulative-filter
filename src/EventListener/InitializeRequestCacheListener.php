@@ -88,7 +88,7 @@ class InitializeRequestCacheListener
     /**
      * 301-redirect the current URL with isorc replaced by the given hash.
      */
-    private function redirectWithHash(string $hash): never
+    private function redirectWithHash(string $hash): void
     {
         $currentUrl = Environment::get('uri');
 
@@ -107,7 +107,7 @@ class InitializeRequestCacheListener
     /**
      * 301-redirect to the current URL with isorc (and page_iso* pagination) stripped.
      */
-    private function redirectWithoutIsorc(): never
+    private function redirectWithoutIsorc(): void
     {
         $currentUrl = Environment::get('uri');
 
