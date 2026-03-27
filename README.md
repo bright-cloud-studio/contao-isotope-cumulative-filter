@@ -34,7 +34,7 @@ The bundle registers its extended class against Isotope's existing `iso_cumulati
 
 The extended class intercepts the filter save request, persists the filter state via Isotope's own `RequestCache::saveNewConfiguration()`, then reads the `config_hash` column and redirects to `?isorc=<hash>` instead of `?isorc=<id>`.
 
-### `InitializeRequestCacheListener` (Hook: `getPageLayout`)
+### `InitializeRequestCacheListener` (Hook: `initializeSystem`)
 
 Fires before Isotope initialises. When `?isorc=` contains a 32-character hex hash, it looks up the corresponding integer ID in `tl_iso_requestcache` and rewrites `$_GET['isorc']` in place. Isotope's unmodified `RequestCache::findByIdAndStore()` then proceeds normally. If the hash is not found (cache purged or stale URL), the parameter is removed entirely so Isotope does not mark the page as invalid.
 
