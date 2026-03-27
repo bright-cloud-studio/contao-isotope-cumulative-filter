@@ -6,3 +6,5 @@ services:
     Bcs\IsotopeCumulativeFilterBundle\EventListener\GeneratePageListener: ~
 
     Bcs\IsotopeCumulativeFilterBundle\EventListener\InitializeRequestCacheListener: ~
+
+    Bcs\IsotopeCumulativeFilterBundle\EventListener\ReplaceIsorcInRedirectListener: ~
